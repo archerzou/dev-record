@@ -21,13 +21,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
-        run: dotnet restore DevHabit.sln
+        run: dotnet restore DevRecord.sln
 
       - name: Build
-        run: dotnet build DevHabit.sln --configuration Release --no-restore
+        run: dotnet build DevRecord.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test DevHabit.sln --configuration Release --no-restore --no-build
+        run: dotnet test DevRecord.sln --configuration Release --no-restore --no-build
 
       - name: Publish
-        run: dotnet publish DevHabit.sln --configuration Release --no-restore --no-build
+        run: dotnet publish DevRecord.sln --configuration Release --no-restore --no-build
