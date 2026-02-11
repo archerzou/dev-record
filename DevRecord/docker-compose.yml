@@ -14,6 +14,17 @@ services:
       # Aspire Dashboard
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://devrecord.aspire-dashboard:18889
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+  
+  devrecord.postgres:
+    image: postgres:17.2 # or latest
+    environment:
+      POSTGRES_DB: devrecord
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./.containers/postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
 
   devrecord.seq:
     image: datalust/seq:2024.3 # or latest
