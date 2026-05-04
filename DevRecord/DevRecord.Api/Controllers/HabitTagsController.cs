@@ -43,7 +43,7 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
 
         habit.HabitTags.RemoveAll(ht => !upsertHabitTagsDto.TagIds.Contains(ht.TagId));
 
-        string[] tagIdsToAdd = upsertHabitTagsDto.TagIds.Except(currentTagIds).ToArray();
+        string[] tagIdsToAdd = [.. upsertHabitTagsDto.TagIds.Except(currentTagIds)];
         habit.HabitTags.AddRange(tagIdsToAdd.Select(tagId => new HabitTag
         {
             HabitId = habitId,
