@@ -1,10 +1,13 @@
-﻿using DevRecord.Api.Database;
+﻿using System.Linq.Dynamic.Core;
+using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Habits;
 using DevRecord.Api.Entities;
+using DevRecord.Api.Services.Sorting;
 using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DevRecord.Api.Controllers;
 
@@ -13,10 +16,30 @@ namespace DevRecord.Api.Controllers;
 public sealed class HabitsController(ApplicationDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetHabits()
+    public async Task<IActionResult> GetHabits(
+        [FromQuery] HabitsQueryParameters query,
+        SortMappingProvider sortMappingProvider)
     {
+        if (!sortMappingProvider.ValidateMappings<HabitDto, Habit>(query.Sort))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                detail: $"The provided sort parameter isn't valid: '{query.Sort}'");
+        }
+
+        query.Search ??= query.Search?.Trim().ToLower();
+
+        SortMapping[] sortMappings = sortMappingProvider.GetMappings<HabitDto, Habit>();
+
+
         List<HabitDto> habits = await dbContext
             .Habits
+            .Where(h => query.Search == null ||
+                        h.Name.ToLower().Contains(query.Search) ||
+                        h.Description != null && h.Description.ToLower().Contains(query.Search))
+            .Where(h => query.Type == null || h.Type == query.Type)
+            .Where(h => query.Status == null || h.Status == query.Status)
+            .ApplySort(query.Sort, sortMappings)
             .Select(HabitQueries.ProjectToDto())
             .ToListAsync();
 
