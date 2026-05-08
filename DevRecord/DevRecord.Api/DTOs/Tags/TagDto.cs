@@ -1,10 +1,6 @@
-﻿namespace DevRecord.Api.DTOs.Tags;
+﻿using DevRecord.Api.DTOs.Common;
 
-public sealed record TagsCollectionDto
-{
-    public List<TagDto> Data { get; set; }
-}
-
+namespace DevRecord.Api.DTOs.Tags;
 public sealed record TagDto
 {
     public required string Id { get; init; }

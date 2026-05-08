@@ -1,11 +1,7 @@
-﻿using DevRecord.Api.Entities;
+﻿using DevRecord.Api.DTOs.Common;
+using DevRecord.Api.Entities;
 
 namespace DevRecord.Api.DTOs.Habits;
-
-public sealed record HabitsCollectionDto
-{
-    public List<HabitDto> Data { get; init; }
-}
 
 public sealed record HabitDto
 {
