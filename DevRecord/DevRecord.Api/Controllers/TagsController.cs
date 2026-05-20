@@ -3,6 +3,7 @@ using DevRecord.Api.DTOs.Tags;
 using DevRecord.Api.Entities;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace DevRecord.Api.Controllers;
 
 [ApiController]
 [Route("tags")]
+[Authorize]
 public sealed class TagsController(ApplicationDbContext dbContext) : ControllerBase
 {
     [HttpGet]
