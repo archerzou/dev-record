@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using Asp.Versioning;
 using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Habits;
@@ -146,6 +147,25 @@ public static class DependencyInjection
 
         builder.Services.AddMemoryCache();
         builder.Services.AddScoped<UserContext>();
+
+        builder.Services.AddScoped<GitHubAccessTokenService>();
+        builder.Services.AddTransient<GitHubService>();
+
+        builder.Services
+            .AddHttpClient("github")
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri("https://api.github.com");
+
+                client.DefaultRequestHeaders
+                    .UserAgent.Add(new ProductInfoHeaderValue("DevRecord", "1.0"));
+
+                client.DefaultRequestHeaders
+                    .Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+            });
+
+        builder.Services.Configure<EncryptionOptions>(builder.Configuration.GetSection("Encryption"));
+        builder.Services.AddTransient<EncryptionService>();
 
         return builder;
     }

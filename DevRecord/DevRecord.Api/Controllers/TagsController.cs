@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevRecord.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("tags")]
-[Authorize]
 public sealed class TagsController(ApplicationDbContext dbContext) : ControllerBase
 {
     [HttpGet]

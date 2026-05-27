@@ -1,5 +1,6 @@
 ﻿using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Users;
+using DevRecord.Api.Entities;
 using DevRecord.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevRecord.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("users")]
 [Authorize]
 public sealed class UsersController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
 {
     [HttpGet("{id}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<UserDto>> GetUserById(string id)
     {
         string? userId = await userContext.GetUserIdAsync();

@@ -16,10 +16,10 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DevRecord.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("habits")]
 [ApiVersion(1.0)]
-[Authorize]
 
 public sealed class HabitsController(
     ApplicationDbContext dbContext, 
