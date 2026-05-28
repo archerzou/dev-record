@@ -1,5 +1,7 @@
 using DevRecord.Api;
 using DevRecord.Api.Extensions;
+using DevRecord.Api.Settings;
+
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,9 @@ builder
     .AddDatabase()
     .AddObservability()
     .AddApplicationServices()
-    .AddAuthenticationServices();
+    .AddAuthenticationServices()
+    .AddCorsPolicy();
+
 
 WebApplication app = builder.Build();
 
@@ -31,6 +35,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseExceptionHandler();
+
+app.UseCors(CorsOptions.PolicyName);
 
 app.MapControllers();
 

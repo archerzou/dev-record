@@ -55,6 +55,8 @@ public sealed class GitHubController(
             return Unauthorized();
         }
 
+        Console.WriteLine($"Accept header received: {acceptHeader.Accept}");
+
         string? accessToken = await gitHubAccessTokenService.GetAsync(userId);
         if (string.IsNullOrWhiteSpace(accessToken))
         {
