@@ -1,26 +1,37 @@
-﻿using DevRecord.Api.Database;
+﻿using System.Net.Mime;
+using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Common;
 using DevRecord.Api.DTOs.Tags;
 using DevRecord.Api.Entities;
 using DevRecord.Api.Services;
+using DevRecord.Api.Settings;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace DevRecord.Api.Controllers;
 
 [Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("tags")]
-public sealed class TagsController(ApplicationDbContext dbContext,
+[Produces(
+    MediaTypeNames.Application.Json,
+    CustomMediaTypeNames.Application.JsonV1,
+    CustomMediaTypeNames.Application.HateoasJson,
+    CustomMediaTypeNames.Application.HateoasJsonV1)]
+public sealed class TagsController(
+    ApplicationDbContext dbContext,
     LinkService linkService,
     UserContext userContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<TagsCollectionDto>> GetTags([FromHeader] AcceptHeaderDto acceptHeader)
+    public async Task<ActionResult<TagsCollectionDto>> GetTags(
+        [FromHeader] AcceptHeaderDto acceptHeader,
+        IOptions<TagsOptions> options)
     {
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
@@ -30,6 +41,7 @@ public sealed class TagsController(ApplicationDbContext dbContext,
 
         List<TagDto> tags = await dbContext
             .Tags
+            .Where(t => t.UserId == userId)
             .Select(TagQueries.ProjectToDto())
             .ToListAsync();
 
@@ -40,7 +52,7 @@ public sealed class TagsController(ApplicationDbContext dbContext,
 
         if (acceptHeader.IncludeLinks)
         {
-            tagsCollectionDto.Links = CreateLinksForTags();
+            tagsCollectionDto.Links = CreateLinksForTags(tags.Count, options.Value.MaxAllowedTags);
             foreach (TagDto tagDto in tagsCollectionDto.Items)
             {
                 tagDto.Links = CreateLinksForTag(tagDto.Id);
@@ -61,7 +73,7 @@ public sealed class TagsController(ApplicationDbContext dbContext,
 
         TagDto? tag = await dbContext
             .Tags
-            .Where(t => t.Id == id)
+            .Where(t => t.Id == id && t.UserId == userId)
             .Select(TagQueries.ProjectToDto())
             .FirstOrDefaultAsync();
 
@@ -172,13 +184,17 @@ public sealed class TagsController(ApplicationDbContext dbContext,
         return NoContent();
     }
 
-    private List<LinkDto> CreateLinksForTags()
+    private List<LinkDto> CreateLinksForTags(int tagsCount, int maxAllowedTags)
     {
         List<LinkDto> links =
         [
-            linkService.Create(nameof(GetTags), "self", HttpMethods.Get),
-            linkService.Create(nameof(CreateTag), "create", HttpMethods.Post)
+            linkService.Create(nameof(GetTags), "self", HttpMethods.Get)
         ];
+
+        if (tagsCount < maxAllowedTags)
+        {
+            links.Add(linkService.Create(nameof(CreateTag), "create", HttpMethods.Post));
+        }
 
         return links;
     }

@@ -16,10 +16,9 @@ internal static class QueryableExtensions
             return query.OrderBy(defaultOrderBy);
         }
 
-        string[] sortFields = sort.Split(',')
+        string[] sortFields = [..sort.Split(',')
             .Select(s => s.Trim())
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .ToArray();
+            .Where(s => !string.IsNullOrWhiteSpace(s))];
 
         var orderByParts = new List<string>();
         foreach (string field in sortFields)
