@@ -1,5 +1,6 @@
 using DevRecord.Api;
 using DevRecord.Api.Extensions;
+using DevRecord.Api.Middleware;
 using DevRecord.Api.Settings;
 
 
@@ -32,12 +33,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseExceptionHandler();
 
 app.UseCors(CorsOptions.PolicyName);
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<ETagMiddleware>();
 
 app.MapControllers();
 

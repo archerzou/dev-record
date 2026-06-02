@@ -71,6 +71,8 @@ public static class DependencyInjection
 
         builder.Services.AddOpenApi();
 
+        builder.Services.AddResponseCaching();
+
         return builder;
     }
 
@@ -178,6 +180,8 @@ public static class DependencyInjection
 
         builder.Services.Configure<TagsOptions>(
             builder.Configuration.GetSection(TagsOptions.SectionName));
+
+        builder.Services.AddSingleton<InMemoryETagStore>();
 
         return builder;
     }
