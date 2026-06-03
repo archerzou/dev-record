@@ -1,6 +1,8 @@
-﻿using System.Net.Mime;
+﻿using System.Dynamic;
+using System.Net.Mime;
 using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Common;
+using DevRecord.Api.DTOs.Entries;
 using DevRecord.Api.DTOs.Tags;
 using DevRecord.Api.Entities;
 using DevRecord.Api.Services;

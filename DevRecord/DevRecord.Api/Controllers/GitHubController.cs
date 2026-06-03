@@ -14,7 +14,7 @@ namespace DevRecord.Api.Controllers;
 
 public sealed class GitHubController(
     GitHubAccessTokenService gitHubAccessTokenService,
-    GitHubService gitHubService,
+    RefitGitHubService gitHubService,
     UserContext userContext,
     LinkService linkService) : ControllerBase
 {
