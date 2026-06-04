@@ -25,6 +25,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
+using Refit;
 
 namespace DevRecord.Api;
 
@@ -159,6 +160,10 @@ public static class DependencyInjection
         builder.Services.AddScoped<GitHubAccessTokenService>();
         builder.Services.AddTransient<GitHubService>();
 
+        builder.Services.AddTransient<RefitGitHubService>();
+
+
+
         builder.Services
             .AddHttpClient("github")
             .ConfigureHttpClient(client =>
@@ -171,6 +176,14 @@ public static class DependencyInjection
                 client.DefaultRequestHeaders
                     .Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
             });
+
+        builder.Services
+            .AddRefitClient<IGitHubApi>(new RefitSettings
+            {
+                ContentSerializer = new NewtonsoftJsonContentSerializer()
+            })
+            .ConfigureHttpClient(client => client.BaseAddress = new Uri("https://api.github.com"));
+
 
         builder.Services.Configure<EncryptionOptions>(builder.Configuration.GetSection("Encryption"));
         builder.Services.AddTransient<EncryptionService>();
