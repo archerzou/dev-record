@@ -14,6 +14,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<GitHubAccessToken> GitHubAccessTokens { get; set; }
     public DbSet<Entry> Entries { get; set; }
 
+    public DbSet<EntryImportJob> EntryImportJobs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(Schemas.Application);
