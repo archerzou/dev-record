@@ -82,13 +82,13 @@ export const EntriesPage: React.FC = () => {
     loadEntries();
   }, []);
 
-  const loadEntries = async (url?: string) => {
+  const loadEntries = async (url?: string, append = true) => {
     const result = await getEntriesCursor({
       limit: 6,
       url,
     });
     if (result) {
-      setEntries(prevEntries => [...prevEntries, ...result.items]);
+      setEntries(append ? prevEntries => [...prevEntries, ...result.items] : result.items);
       setEntriesResponse(result);
       setNextPageLink(result.links.find(l => l.rel === 'next-page') || null);
       setPrevPageLink(result.links.find(l => l.rel === 'previous-page') || null);
@@ -112,7 +112,7 @@ export const EntriesPage: React.FC = () => {
 
     const success = await deleteEntry(deleteLink);
     if (success) {
-      await loadEntries();
+      await loadEntries(undefined, false);
     }
   };
 

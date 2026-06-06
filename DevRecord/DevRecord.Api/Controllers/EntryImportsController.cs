@@ -8,6 +8,7 @@ using DevRecord.Api.Entities;
 using DevRecord.Api.Jobs;
 using DevRecord.Api.Services;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -42,10 +43,15 @@ public sealed class EntryImportsController(
             return Unauthorized();
         }
 
-        await validator.ValidateAsync(createImportJobDto);
+        ValidationResult? validationResult = await validator.ValidateAsync(createImportJobDto);
 
-        // Create import job
-        using var memoryStream = new MemoryStream();
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+            // Create import job
+            using var memoryStream = new MemoryStream();
         await createImportJobDto.File.CopyToAsync(memoryStream);
 
         var importJob = new EntryImportJob
