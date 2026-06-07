@@ -1,8 +1,10 @@
-﻿using DevRecord.Api.Database;
+﻿using System.Net.Mime;
+using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Common;
 using DevRecord.Api.DTOs.Users;
 using DevRecord.Api.Entities;
 using DevRecord.Api.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +14,13 @@ namespace DevRecord.Api.Controllers;
 [Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("users")]
-[Authorize]
+[Produces(
+    MediaTypeNames.Application.Json,
+    CustomMediaTypeNames.Application.JsonV1,
+    CustomMediaTypeNames.Application.HateoasJson,
+    CustomMediaTypeNames.Application.HateoasJsonV1)]
 public sealed class UsersController(
-    ApplicationDbContext dbContext, 
+    ApplicationDbContext dbContext,
     UserContext userContext,
     LinkService linkService) : ControllerBase
 {
@@ -74,8 +80,12 @@ public sealed class UsersController(
     }
 
     [HttpPut("me/profile")]
-    public async Task<ActionResult> UpdateProfile(UpdateUserProfileDto dto)
+    public async Task<ActionResult> UpdateProfile(
+        [FromBody] UpdateUserProfileDto dto,
+        [FromServices] IValidator<UpdateUserProfileDto> validator)
     {
+        await validator.ValidateAndThrowAsync(dto);
+
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -96,7 +106,6 @@ public sealed class UsersController(
 
         return NoContent();
     }
-
     private List<LinkDto> CreateLinksForUser()
     {
         List<LinkDto> links =

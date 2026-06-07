@@ -1,6 +1,7 @@
 ﻿using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.HabitTags;
 using DevRecord.Api.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +16,13 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
     public static readonly string Name = nameof(HabitTagsController).Replace("Controller", string.Empty);
 
     [HttpPut]
-    public async Task<ActionResult> UpsertHabitTags(string habitId, UpsertHabitTagsDto upsertHabitTagsDto)
+    public async Task<ActionResult> UpsertHabitTags(
+        string habitId,
+        UpsertHabitTagsDto upsertHabitTagsDto,
+        IValidator<UpsertHabitTagsDto> validator)
     {
+        await validator.ValidateAndThrowAsync(upsertHabitTagsDto);
+
         Habit? habit = await dbContext.Habits
             .Include(h => h.HabitTags)
             .FirstOrDefaultAsync(h => h.Id == habitId);
@@ -40,7 +46,9 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
 
         if (existingTagIds.Count != upsertHabitTagsDto.TagIds.Count)
         {
-            return BadRequest("One or more tag IDs is invalid");
+            return Problem(
+                detail: "One or more tag IDs is invalid",
+                statusCode: StatusCodes.Status400BadRequest);
         }
 
         habit.HabitTags.RemoveAll(ht => !upsertHabitTagsDto.TagIds.Contains(ht.TagId));

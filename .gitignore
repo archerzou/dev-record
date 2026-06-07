@@ -402,3 +402,7 @@ FodyWeavers.xsd
 .containers
 
 .idea/
+
+# Test Report files
+coverage-report/
+TestResults/

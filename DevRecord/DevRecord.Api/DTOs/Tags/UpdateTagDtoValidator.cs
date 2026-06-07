@@ -2,9 +2,9 @@
 
 namespace DevRecord.Api.DTOs.Tags;
 
-public sealed class CreateTagDtoValidator: AbstractValidator<CreateTagDto>
+public sealed class UpdateTagDtoValidator : AbstractValidator<UpdateTagDto>
 {
-    public CreateTagDtoValidator()
+    public UpdateTagDtoValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -12,7 +12,6 @@ public sealed class CreateTagDtoValidator: AbstractValidator<CreateTagDto>
             .MaximumLength(50);
 
         RuleFor(x => x.Description)
-            .MaximumLength(500)
-            .When(x => x.Description is not null);
+            .MaximumLength(100);
     }
 }

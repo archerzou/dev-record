@@ -43,15 +43,10 @@ public sealed class EntryImportsController(
             return Unauthorized();
         }
 
-        ValidationResult? validationResult = await validator.ValidateAsync(createImportJobDto);
+        await validator.ValidateAsync(createImportJobDto);
 
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors);
-        }
-
-            // Create import job
-            using var memoryStream = new MemoryStream();
+        // Create import job
+        using var memoryStream = new MemoryStream();
         await createImportJobDto.File.CopyToAsync(memoryStream);
 
         var importJob = new EntryImportJob
@@ -205,4 +200,3 @@ public sealed class EntryImportsController(
         return links;
     }
 }
-
