@@ -114,7 +114,7 @@ public sealed class LoginUserDtoValidatorTests
         var dto = new LoginUserDto
         {
             Email = "test@example.com",
-            Password = new string('a', 101)
+            Password = new string('a', 256)
         };
 
         // Act

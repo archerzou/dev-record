@@ -12,6 +12,7 @@ public sealed class UpdateTagDtoValidator : AbstractValidator<UpdateTagDto>
             .MaximumLength(50);
 
         RuleFor(x => x.Description)
-            .MaximumLength(100);
+            .MaximumLength(500)
+            .When(x => x.Description is not null);
     }
 }

@@ -240,14 +240,14 @@ public sealed class HabitsController(
             return NotFound();
         }
 
-        if (habit.AutomationSource is null &&
-            updateHabitDto.AutomationSource is not null &&
+        if (updateHabitDto.AutomationSource is not null &&
+            updateHabitDto.AutomationSource != habit.AutomationSource &&
             await dbContext.Habits.AnyAsync(
                 h => h.UserId == userId && h.AutomationSource == updateHabitDto.AutomationSource))
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
-                detail: $"Only one habit with this automation source is allowed: '{habit.AutomationSource}'");
+                detail: $"Only one habit with this automation source is allowed: '{updateHabitDto.AutomationSource}'");
         }
 
         habit.UpdateFromDto(updateHabitDto);

@@ -12,7 +12,7 @@ public sealed class CreateEntryDtoValidator : AbstractValidator<CreateEntryDto>
 
         RuleFor(x => x.Value)
             .GreaterThan(0)
-            .WithMessage("Value must be greater than or equal to 0.");
+            .WithMessage("Value must be greater than 0.");
 
         RuleFor(x => x.Notes)
             .MaximumLength(1000)

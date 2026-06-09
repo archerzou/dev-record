@@ -14,6 +14,6 @@ public sealed class LoginUserDtoValidator : AbstractValidator<LoginUserDto>
         RuleFor(x => x.Password)
             .NotEmpty()
             .MinimumLength(6)
-            .MaximumLength(100);
+            .MaximumLength(255);
     }
 }

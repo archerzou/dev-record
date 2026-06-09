@@ -22,8 +22,15 @@ public sealed class DevRecordWebAppFactory: WebApplicationFactory<Program>, IAsy
         await _postgresContainer.StartAsync();
     }
 
-    public new async Task DisposeAsync()
+    async Task IAsyncLifetime.DisposeAsync()
     {
         await _postgresContainer.StopAsync();
+        await base.DisposeAsync();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await _postgresContainer.StopAsync();
+        await base.DisposeAsync();
     }
 }
