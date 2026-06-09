@@ -3,15 +3,19 @@ using DevRecord.Api.DTOs.Common;
 using DevRecord.Api.DTOs.GitHub;
 using DevRecord.Api.Entities;
 using DevRecord.Api.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevRecord.Api.Controllers;
-
-[Authorize()]
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("github")]
-
+[Produces(
+    MediaTypeNames.Application.Json,
+    CustomMediaTypeNames.Application.JsonV1,
+    CustomMediaTypeNames.Application.HateoasJson,
+    CustomMediaTypeNames.Application.HateoasJsonV1)]
 public sealed class GitHubController(
     GitHubAccessTokenService gitHubAccessTokenService,
     RefitGitHubService gitHubService,
@@ -19,8 +23,12 @@ public sealed class GitHubController(
     LinkService linkService) : ControllerBase
 {
     [HttpPut("personal-access-token")]
-    public async Task<IActionResult> StoreAccessToken(StoreGitHubAccessTokenDto storeGitHubAccessTokenDto)
+    public async Task<IActionResult> StoreAccessToken(
+        StoreGitHubAccessTokenDto storeGitHubAccessTokenDto,
+        IValidator<StoreGitHubAccessTokenDto> validator)
     {
+        await validator.ValidateAndThrowAsync(storeGitHubAccessTokenDto);
+
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -54,8 +62,6 @@ public sealed class GitHubController(
         {
             return Unauthorized();
         }
-
-        Console.WriteLine($"Accept header received: {acceptHeader.Accept}");
 
         string? accessToken = await gitHubAccessTokenService.GetAsync(userId);
         if (string.IsNullOrWhiteSpace(accessToken))

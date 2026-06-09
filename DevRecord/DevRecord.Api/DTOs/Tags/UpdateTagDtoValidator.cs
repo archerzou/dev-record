@@ -2,9 +2,9 @@
 
 namespace DevRecord.Api.DTOs.Tags;
 
-public sealed class CreateTagDtoValidator: AbstractValidator<CreateTagDto>
+public sealed class UpdateTagDtoValidator : AbstractValidator<UpdateTagDto>
 {
-    public CreateTagDtoValidator()
+    public UpdateTagDtoValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty()

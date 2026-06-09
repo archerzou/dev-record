@@ -41,11 +41,13 @@ app.UseCors(CorsOptions.PolicyName);
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseRateLimiter();
 
-//app.UseMiddleware<ETagMiddleware>();
+app.UseUserContextEnrichment();
 
 app.MapControllers();
+//app.UseETag();
 
 await app.RunAsync();
+
+public partial class Program;
