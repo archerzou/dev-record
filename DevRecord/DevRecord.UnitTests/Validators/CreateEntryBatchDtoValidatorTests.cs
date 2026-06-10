@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevRecord.Api.DTOs.Entries;
+﻿using DevRecord.Api.DTOs.Entries;
 using DevRecord.Api.Entities;
 using FluentValidation.TestHelper;
 

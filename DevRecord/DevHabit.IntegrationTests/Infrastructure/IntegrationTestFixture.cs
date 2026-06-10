@@ -4,6 +4,7 @@ using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using WireMock.Server;
 
 namespace DevRecord.IntegrationTests.Infrastructure;
 
@@ -11,6 +12,7 @@ namespace DevRecord.IntegrationTests.Infrastructure;
 public abstract class IntegrationTestFixture(DevRecordWebAppFactory factory) : IClassFixture<DevRecordWebAppFactory>
 {
     private HttpClient? _authorizedClient;
+    public WireMockServer WireMockServer => factory.GetWireMockServer();
     public HttpClient CreateClient() => factory.CreateClient();
 
     public async Task<HttpClient> CreateAuthenticatedClientAsync(
