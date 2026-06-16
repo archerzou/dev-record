@@ -1,8 +1,6 @@
-﻿using System.Dynamic;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Common;
-using DevRecord.Api.DTOs.Entries;
 using DevRecord.Api.DTOs.Tags;
 using DevRecord.Api.Entities;
 using DevRecord.Api.Services;
@@ -29,12 +27,12 @@ namespace DevRecord.Api.Controllers;
 public sealed class TagsController(
     ApplicationDbContext dbContext,
     LinkService linkService,
-    UserContext userContext) : ControllerBase
+    UserContext userContext,
+    IOptions<TagsOptions> options) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<TagsCollectionDto>> GetTags(
-        [FromHeader] AcceptHeaderDto acceptHeader,
-        IOptions<TagsOptions> options)
+        [FromHeader] AcceptHeaderDto acceptHeader)
     {
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
@@ -118,9 +116,16 @@ public sealed class TagsController(
             return BadRequest(problem);
         }
 
+        if (await dbContext.Tags.CountAsync(t => t.UserId == userId) >= options.Value.MaxAllowedTags)
+        {
+            return Problem(
+                detail: "Reached the maximum number of allowed tags",
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
         Tag tag = createTagDto.ToEntity(userId);
 
-        if (await dbContext.Tags.AnyAsync(t => t.Name == tag.Name))
+        if (await dbContext.Tags.AnyAsync(t => t.UserId == userId && t.Name == tag.Name))
         {
             return Problem(
                 detail: $"The tag '{tag.Name}' already exists",

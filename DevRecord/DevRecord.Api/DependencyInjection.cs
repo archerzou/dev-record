@@ -173,7 +173,7 @@ public static class DependencyInjection
             .AddHttpClient("github")
             .ConfigureHttpClient(client =>
             {
-                client.BaseAddress = new Uri("https://api.github.com");
+                client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
 
                 client.DefaultRequestHeaders
                     .UserAgent.Add(new ProductInfoHeaderValue("DevRecord", "1.0"));
@@ -188,10 +188,14 @@ public static class DependencyInjection
             {
                 ContentSerializer = new NewtonsoftJsonContentSerializer()
             })
-            .ConfigureHttpClient(client => client.BaseAddress = new Uri("https://api.github.com"));
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
+            });
 
 
-        builder.Services.Configure<EncryptionOptions>(builder.Configuration.GetSection("Encryption"));
+        builder.Services.Configure<EncryptionOptions>(
+            builder.Configuration.GetSection(EncryptionOptions.SectionName));
         builder.Services.AddTransient<EncryptionService>();
 
         builder.Services.Configure<GitHubAutomationOptions>(
