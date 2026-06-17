@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.Abstractions;
 using Testcontainers.PostgreSql;
 using WireMock.Server;
 
@@ -23,25 +25,9 @@ public sealed class DevRecordWebAppFactory: WebApplicationFactory<Program>, IAsy
     {
         builder.UseSetting("ConnectionStrings:Database", _postgresContainer.GetConnectionString());
         builder.UseSetting("GitHub:BaseUrl", _wireMockServer.Urls[0]);
-        
-        // Valid 32-byte Base64 key for AES-256; replaces the placeholder in appsettings.Development.json
-        // which is not valid Base64 and has no user-secrets override in CI
-        builder.UseSetting("Encryption:Key", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
 
-        builder.ConfigureServices(services =>
-        {
-            // Remove Quartz hosted service to prevent LoggerFactory disposal conflict
-            // during WebApplicationFactory startup (Quartz XML processor logs during Host.StartAsync)
-            var quartzHostedServices = services
-                .Where(d => d.ServiceType == typeof(IHostedService) &&
-                            d.ImplementationType?.Assembly.GetName().Name?.Contains("Quartz") == true)
-                .ToList();
-
-            foreach (ServiceDescriptor descriptor in quartzHostedServices)
-            {
-                services.Remove(descriptor);
-            }
-        });
+        builder.UseSetting("Encryption:Key", Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
+        Quartz.Logging.LogContext.SetCurrentLogProvider(NullLoggerFactory.Instance);
     }
 
     public async Task InitializeAsync()

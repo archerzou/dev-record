@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Logging.Abstractions;
 using Testcontainers.PostgreSql;
 using WireMock.Server;
 
@@ -22,6 +24,9 @@ public sealed class DevRecordWebAppFactory : WebApplicationFactory<Program>, IAs
     {
         builder.UseSetting("ConnectionStrings:Database", _postgresContainer.GetConnectionString());
         builder.UseSetting("GitHub:BaseUrl", _wireMockServer.Urls[0]);
+
+        builder.UseSetting("Encryption:Key", Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
+        Quartz.Logging.LogContext.SetCurrentLogProvider(NullLoggerFactory.Instance);
     }
 
     public async Task InitializeAsync()
@@ -30,9 +35,12 @@ public sealed class DevRecordWebAppFactory : WebApplicationFactory<Program>, IAs
         _wireMockServer = WireMockServer.Start();
     }
 
-    public new async Task DisposeAsync()
+    async Task IAsyncLifetime.DisposeAsync() => await DisposeAsync();
+
+    public override async ValueTask DisposeAsync()
     {
         await _postgresContainer.StopAsync();
-        _wireMockServer.Stop();
+        _wireMockServer?.Stop();
+        await base.DisposeAsync();
     }
 }

@@ -37,11 +37,11 @@ public abstract class FunctionalTestFixture(DevRecordWebAppFactory factory) : IC
             DO $$
             BEGIN
                 -- Truncate application tables
-                TRUNCATE TABLE dev_habit.entries CASCADE;
-                TRUNCATE TABLE dev_habit.entry_import_jobs CASCADE;
-                TRUNCATE TABLE dev_habit.tags CASCADE;
-                TRUNCATE TABLE dev_habit.habits CASCADE;
-                TRUNCATE TABLE dev_habit.users CASCADE;
+                TRUNCATE TABLE dev_record.entries CASCADE;
+                TRUNCATE TABLE dev_record.entry_import_jobs CASCADE;
+                TRUNCATE TABLE dev_record.tags CASCADE;
+                TRUNCATE TABLE dev_record.habits CASCADE;
+                TRUNCATE TABLE dev_record.users CASCADE;
 
                 -- Truncate identity tables
                 TRUNCATE TABLE identity.asp_net_users CASCADE;
