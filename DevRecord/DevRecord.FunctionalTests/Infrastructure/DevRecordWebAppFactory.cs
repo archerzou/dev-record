@@ -1,15 +1,14 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using Testcontainers.PostgreSql;
 using WireMock.Server;
 
-namespace DevRecord.IntegrationTests.Infrastructure;
 
-public sealed class DevRecordWebAppFactory: WebApplicationFactory<Program>, IAsyncLifetime
+namespace DevRecord.FunctionalTests.Infrastructure;
+
+public sealed class DevRecordWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder("postgres:17.2")
         .WithDatabase("devrecord")
