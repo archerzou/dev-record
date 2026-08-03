@@ -35,7 +35,7 @@ public sealed class LoginUserDtoValidatorTests
     public async Task Validate_ShouldReturnError_WhenEmailIsNullOrWhitespace(string? email)
     {
         var dto = new LoginUserDto { Email = email!, Password = "password123" };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<LoginUserDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
@@ -128,7 +128,7 @@ public sealed class LoginUserDtoValidatorTests
     public async Task Validate_ShouldNotReturnError_WhenPasswordIsExactlyMinLength()
     {
         var dto = new LoginUserDto { Email = "test@example.com", Password = "123456" };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<LoginUserDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveValidationErrorFor(x => x.Password);
     }
 }

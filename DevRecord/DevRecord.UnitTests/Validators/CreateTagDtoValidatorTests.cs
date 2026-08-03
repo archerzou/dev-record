@@ -66,7 +66,7 @@ public sealed class CreateTagDtoValidatorTests
     public async Task Validate_ShouldReturnError_WhenNameIsTooShort()
     {
         var dto = new CreateTagDto { Name = "ab" };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateTagDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
@@ -74,7 +74,7 @@ public sealed class CreateTagDtoValidatorTests
     public async Task Validate_ShouldNotReturnError_WhenDescriptionIsNull()
     {
         var dto = new CreateTagDto { Name = "Work", Description = null };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateTagDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -82,7 +82,7 @@ public sealed class CreateTagDtoValidatorTests
     public async Task Validate_ShouldReturnError_WhenDescriptionExceedsMaxLength()
     {
         var dto = new CreateTagDto { Name = "Work", Description = new string('a', 501) };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateTagDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
 }

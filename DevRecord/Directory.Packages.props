@@ -30,6 +30,8 @@
     <PackageVersion Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageVersion Include="Refit.Newtonsoft.Json" Version="8.0.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.7.2" />
     <!-- Testing -->
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
