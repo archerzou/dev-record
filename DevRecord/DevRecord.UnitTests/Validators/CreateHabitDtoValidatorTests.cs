@@ -99,7 +99,7 @@ public sealed class CreateHabitDtoValidatorTests
             Frequency = new FrequencyDto { Type = FrequencyType.Daily, TimesPerPeriod = 1 },
             Target = new TargetDto { Value = 30, Unit = "pages" }
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
@@ -142,7 +142,7 @@ public sealed class CreateHabitDtoValidatorTests
             Target = new TargetDto { Value = 30, Unit = "pages" },
             Description = null
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveValidationErrorFor(x => x.Description);
     }
 
@@ -346,7 +346,7 @@ public sealed class CreateHabitDtoValidatorTests
             Frequency = new FrequencyDto { Type = FrequencyType.Daily, TimesPerPeriod = 1 },
             Target = new TargetDto { Value = 1, Unit = "sessions" } // valid for binary
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -416,7 +416,7 @@ public sealed class CreateHabitDtoValidatorTests
             Target = new TargetDto { Value = 30, Unit = "pages" },
             EndDate = null
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveValidationErrorFor(x => x.EndDate);
     }
 
@@ -462,7 +462,7 @@ public sealed class CreateHabitDtoValidatorTests
             Target = new TargetDto { Value = 30, Unit = "pages" },
             Milestone = null
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveValidationErrorFor(x => x.Milestone);
     }
 
@@ -477,7 +477,7 @@ public sealed class CreateHabitDtoValidatorTests
             Target = new TargetDto { Value = 1, Unit = "tasks" },
             AutomationSource = AutomationSource.GitHub
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateHabitDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

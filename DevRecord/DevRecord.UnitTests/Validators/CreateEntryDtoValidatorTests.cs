@@ -108,7 +108,7 @@ public sealed class CreateEntryDtoValidatorTests
             Value = 1,
             Date = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1))
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateEntryDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldHaveValidationErrorFor(x => x.Date);
     }
 

@@ -112,7 +112,7 @@ public sealed class CreateEntryBatchDtoValidatorTests
                     Date = DateOnly.FromDateTime(DateTime.UtcNow)
                 })]
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateEntryBatchDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -127,7 +127,7 @@ public sealed class CreateEntryBatchDtoValidatorTests
                 new CreateEntryDto { HabitId = Habit.NewId(), Value = 0, Date = DateOnly.FromDateTime(DateTime.UtcNow) }
             ]
         };
-        var result = await _validator.TestValidateAsync(dto);
+        TestValidationResult<CreateEntryBatchDto>? result = await _validator.TestValidateAsync(dto);
         result.ShouldHaveValidationErrorFor("Entries[0].HabitId");
         result.ShouldHaveValidationErrorFor("Entries[1].Value");
     }
