@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using DevRecord.Api.Settings;
 using DevRecord.Api.Database;
 using DevRecord.Api.DTOs.Entries;
 using DevRecord.Api.DTOs.Habits;
@@ -12,7 +12,6 @@ using DevRecord.Api.Jobs;
 using DevRecord.Api.Middleware;
 using DevRecord.Api.Services;
 using DevRecord.Api.Services.Sorting;
-using DevRecord.Api.Settings;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +38,7 @@ public static class DependencyInjection
     {
         builder.Services.AddControllers(options =>
             {
-                options.ReturnHttpNotAcceptable = true;
+                options.ReturnHttpNotAcceptable = false;
             })
             .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver())
@@ -72,17 +71,14 @@ public static class DependencyInjection
                         .Template("application/vnd.dev-record.hateoas.{version}+json")
                         .Build());
             })
-            .AddMvc();
+            .AddMvc()
+            .AddApiExplorer();
+
 
         //builder.Services.AddOpenApi();
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.ResolveConflictingActions(descriptions => descriptions.First());
-
-            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            options.IncludeXmlComments(xmlPath);
-        });
+        builder.Services.AddSwaggerGen();
+        builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+        builder.Services.ConfigureOptions<ConfigureSwaggerUIOptions>();
 
         builder.Services.AddResponseCaching();
 
